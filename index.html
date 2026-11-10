@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Cute &amp; Sweet Birthday Card for Shabina B L</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Canvas Confetti CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <!-- Google Fonts: Pacifico, Dancing Script, Nunito -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Nunito:wght@400;600;700;800;900&family=Pacifico&display=swap"
+        rel="stylesheet" />
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        pacifico: ['Pacifico', 'cursive'],
+                        dancing: ['Dancing Script', 'cursive'],
+                        nunito: ['Nunito', 'sans-serif'],
+                    },
+                    colors: {
+                        sweetPink: '#FF6B8B',
+                        deepBerry: '#9E1C44',
+                        pastelBg: '#FFF0F5',
+                        heartRed: '#E63946',
+                        cardBg: 'rgba(255, 255, 255, 0.88)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Prevent accidental scrolling bounce on mobile */
+        body {
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+            background: radial-gradient(circle at 50% 15%, #ffe6ee 0%, #ffd0dd 50%, #f7b7c8 100%);
+            font-family: 'Nunito', sans-serif;
+        }
+
+        /* Floating hearts background */
+        .bg-heart {
+            position: absolute;
+            bottom: -40px;
+            color: rgba(244, 114, 155, 0.35);
+            animation: floatUpAnim linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes floatUpAnim {
+            0% {
+                transform: translateY(0) rotate(0deg) scale(0.7);
+                opacity: 0;
+            }
+
+            15% {
+                opacity: 0.85;
+            }
+
+            85% {
+                opacity: 0.85;
+            }
+
+            100% {
+                transform: translateY(-110vh) rotate(360deg) scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        /* Candle flame animation */
+        @keyframes flameFlicker {
+
+            0%,
+            100% {
+                transform: scale(1) rotate(-1.5deg);
+            }
+
+            25% {
+                transform: scale(1.1, 0.92) rotate(2deg);
+            }
+
+            50% {
+                transform: scale(0.92, 1.08) rotate(-2deg);
+            }
+
+            75% {
+                transform: scale(1.05, 0.98) rotate(1deg);
+            }
+        }
+
+        .flame-animation {
+            animation: flameFlicker 0.65s infinite ease-in-out;
+            transform-origin: bottom center;
+        }
+
+        /* Balloon wiggle animation */
+        @keyframes balloonFloat {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-9px) rotate(2.5deg);
+            }
+        }
+
+        .balloon-wiggle {
+            animation: balloonFloat 3.2s infinite ease-in-out;
+        }
+
+        /* Gift box shaking animations */
+        @keyframes intenseShake {
+
+            0%,
+            100% {
+                transform: rotate(0deg) scale(1);
+            }
+
+            20% {
+                transform: rotate(-9deg) scale(1.12);
+            }
+
+            40% {
+                transform: rotate(9deg) scale(1.12);
+            }
+
+            60% {
+                transform: rotate(-7deg) scale(1.16);
+            }
+
+            80% {
+                transform: rotate(7deg) scale(1.16);
+            }
+        }
+
+        .shake-active {
+            animation: intenseShake 0.35s ease-in-out;
+        }
+
+        /* Screen transition states */
+        .screen-container {
+            transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .screen-container.screen-hidden {
+            display: none !important;
+            opacity: 0;
+            transform: scale(0.95) translateY(14px);
+        }
+
+        /* Custom typewriter scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #f694ac;
+            border-radius: 9999px;
+        }
+
+        /* Candle blow vignette overlay */
+        #wishVignette {
+            pointer-events: none;
+            transition: opacity 1.2s ease-in-out;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex items-center justify-center p-2 sm:p-4 overflow-hidden relative">
+
+    <!-- Ambient Floating Hearts Background -->
+    <div id="ambientHearts" class="fixed inset-0 overflow-hidden pointer-events-none z-0"></div>
+
+    <!-- Warm Candle Vignette Overlay -->
+    <div id="wishVignette" class="fixed inset-0 bg-stone-950/65 opacity-0 z-30 flex items-center justify-center">
+        <div class="text-center px-6">
+            <p
+                class="font-dancing text-4xl sm:text-5xl font-bold text-amber-200 drop-shadow-[0_4px_12px_rgba(255,200,80,0.5)] animate-pulse">
+                ✨ Close your eyes &amp; make a wish ✨
+            </p>
+        </div>
+    </div>
+
+    <!-- Main Mobile Frame Container (Responsive 9:16 aspect ratio box) -->
+    <div
+        class="relative w-full max-w-[420px] h-[94vh] max-h-[820px] bg-white/85 backdrop-blur-xl border border-white/90 rounded-3xl shadow-[0_25px_60px_rgba(224,75,120,0.28)] flex flex-col overflow-hidden z-10 transition-all">
+
+        <!-- Top App Bar -->
+        <header class="flex items-center justify-between px-5 pt-3.5 pb-2 z-20 border-b border-rose-100/60">
+            <div class="flex items-center space-x-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></span>
+                <span id="stepLabel" class="text-xs font-black tracking-wider uppercase text-rose-500">Step 1 of
+                    7</span>
+            </div>
+
+            <div class="flex items-center space-x-2">
+                <!-- Sound Effect Toggle Button -->
+                <button id="soundToggleBtn"
+                    class="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-rose-600 hover:scale-105 active:scale-95 transition"
+                    title="Toggle audio chime">
+                    <svg id="soundIconOn" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
+                    </svg>
+                    <svg id="soundIconOff" class="w-4 h-4 hidden" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z" />
+                    </svg>
+                </button>
+
+                <!-- Fullscreen Toggle -->
+                <button onclick="toggleFullScreen()"
+                    class="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-rose-600 hover:scale-105 active:scale-95 transition"
+                    title="Toggle Fullscreen">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M4 8V4m0 0h4M4 4l5 5m11-5h-4m4 0v4m0-4l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Screens Viewport -->
+        <main class="relative flex-1 flex flex-col justify-center items-center px-4 overflow-hidden py-3">
+
+            <!-- ==============================================
+           STEP 1: COVER SCREEN (Heart QR Code)
+      =============================================== -->
+            <section id="step1" class="screen-container w-full flex flex-col items-center justify-center text-center">
+                <h2 class="text-[11px] uppercase tracking-widest text-rose-500 font-extrabold mb-1">A Special Surprise
+                    For</h2>
+                <h1
+                    class="font-dancing text-4xl sm:text-5xl font-extrabold text-deepBerry mb-6 tracking-wide drop-shadow-sm">
+                    Shabina B L</h1>
+
+                <!-- Glossy Heart Card -->
+                <div onclick="goToStep(2)"
+                    class="w-64 h-64 bg-gradient-to-tr from-rose-200 via-pink-100 to-white rounded-3xl p-5 shadow-xl border border-white flex flex-col items-center justify-center relative cursor-pointer hover:scale-102 transition duration-300">
+
+                    <!-- 3D Heart with QR Pattern -->
+                    <div class="relative w-44 h-44 flex items-center justify-center">
+                        <svg viewBox="0 0 100 90"
+                            class="w-full h-full drop-shadow-md text-rose-500 fill-current animate-pulse">
+                            <path
+                                d="M50 88.5 C15 60 0 35 0 20 A 20 20 0 0 1 50 15 A 20 20 0 0 1 100 20 C 100 35 85 60 50 88.5 Z" />
+                        </svg>
+
+                        <!-- Centered Scannable QR Mockup -->
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div
+                                class="w-20 h-20 bg-white/95 rounded-xl p-2 shadow-inner flex flex-col justify-between items-center">
+                                <div class="w-full flex justify-between">
+                                    <div class="w-5 h-5 bg-deepBerry rounded-sm p-0.5">
+                                        <div class="w-2 h-2 bg-white m-auto mt-1"></div>
+                                    </div>
+                                    <div class="w-5 h-5 bg-deepBerry rounded-sm p-0.5">
+                                        <div class="w-2 h-2 bg-white m-auto mt-1"></div>
+                                    </div>
+                                </div>
+                                <span class="text-[9px] font-black text-rose-600 tracking-tighter">S ♡ B</span>
+                                <div class="w-full flex justify-between">
+                                    <div class="w-5 h-5 bg-deepBerry rounded-sm p-0.5">
+                                        <div class="w-2 h-2 bg-white m-auto mt-1"></div>
+                                    </div>
+                                    <div class="w-5 h-5 grid grid-cols-2 gap-0.5 p-0.5">
+                                        <div class="bg-deepBerry"></div>
+                                        <div class="bg-deepBerry"></div>
+                                        <div class="bg-deepBerry"></div>
+                                        <div class="bg-rose-300"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-2 flex items-center text-rose-600 font-semibold text-xs tracking-wide">
+                        <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping mr-1.5"></span>
+                        <span>Tap to open</span>
+                    </div>
+                </div>
+
+                <button onclick="goToStep(2)"
+                    class="mt-6 px-8 py-3 bg-gradient-to-r from-rose-500 to-pink-500 text-white font-bold rounded-full shadow-lg shadow-pink-500/30 hover:scale-105 active:scale-95 transition-all text-sm tracking-wide">
+                    Tap to open ✨
+                </button>
+            </section>
+
+            <!-- ==============================================
+           STEP 2: PARTY CELEBRATION & DODGING "NO" BUTTON
+      =============================================== -->
+            <section id="step2"
+                class="screen-container screen-hidden w-full flex flex-col items-center justify-center text-center">
+                <h1 class="font-dancing text-3xl sm:text-4xl font-bold text-deepBerry tracking-wide">
+                    Happy Birthday,<br />
+                    <span class="text-rose-500 underline decoration-rose-300 decoration-wavy">Shabina B L</span>
+                </h1>
+
+                <!-- Chibi Bear & Panda Around Birthday Cake (Inline SVG) -->
+                <div class="my-3 w-56 h-44 relative">
+                    <svg viewBox="0 0 200 160" class="w-full h-full">
+                        <ellipse cx="100" cy="148" rx="75" ry="10" fill="#f8bbd0" opacity="0.6" />
+                        <!-- Chibi Brown Bear -->
+                        <g transform="translate(25, 25)">
+                            <circle cx="20" cy="20" r="12" fill="#8D5B4C" />
+                            <circle cx="20" cy="20" r="6" fill="#F48FB1" />
+                            <circle cx="65" cy="20" r="12" fill="#8D5B4C" />
+                            <circle cx="65" cy="20" r="6" fill="#F48FB1" />
+                            <ellipse cx="42" cy="46" rx="32" ry="26" fill="#A16B57" />
+                            <circle cx="34" cy="42" r="3.5" fill="#2D211E" />
+                            <circle cx="50" cy="42" r="3.5" fill="#2D211E" />
+                            <circle cx="27" cy="50" r="4.5" fill="#F06292" opacity="0.6" />
+                            <circle cx="57" cy="50" r="4.5" fill="#F06292" opacity="0.6" />
+                            <ellipse cx="42" cy="49" rx="8" ry="6" fill="#D7CCC8" />
+                            <ellipse cx="42" cy="47" rx="3" ry="2" fill="#2D211E" />
+                            <polygon points="42,5 30,28 54,28" fill="#FFCA28" />
+                            <circle cx="42" cy="4" r="3.5" fill="#E91E63" />
+                        </g>
+                        <!-- Chibi White Bunny/Panda -->
+                        <g transform="translate(95, 25)">
+                            <circle cx="20" cy="20" r="11" fill="#FFFFFF" stroke="#E0E0E0" stroke-width="1.5" />
+                            <circle cx="20" cy="20" r="5" fill="#F8BBD0" />
+                            <circle cx="65" cy="20" r="11" fill="#FFFFFF" stroke="#E0E0E0" stroke-width="1.5" />
+                            <circle cx="65" cy="20" r="5" fill="#F8BBD0" />
+                            <ellipse cx="42" cy="46" rx="32" ry="26" fill="#FFFFFF" stroke="#EEEEEE"
+                                stroke-width="1.5" />
+                            <path d="M 31 43 Q 35 38 39 43" stroke="#2D211E" stroke-width="2.5" fill="none"
+                                stroke-linecap="round" />
+                            <path d="M 45 43 Q 49 38 53 43" stroke="#2D211E" stroke-width="2.5" fill="none"
+                                stroke-linecap="round" />
+                            <circle cx="28" cy="50" r="4.5" fill="#FF80AB" opacity="0.7" />
+                            <circle cx="56" cy="50" r="4.5" fill="#FF80AB" opacity="0.7" />
+                            <circle cx="42" cy="48" r="2.5" fill="#2D211E" />
+                            <polygon points="42,5 30,28 54,28" fill="#4DD0E1" />
+                            <circle cx="42" cy="4" r="3.5" fill="#FF4081" />
+                        </g>
+                        <!-- Cake -->
+                        <g transform="translate(68, 88)">
+                            <rect x="10" y="25" width="44" height="26" rx="6" fill="#FCE4EC" stroke="#F48FB1"
+                                stroke-width="1.5" />
+                            <path d="M 10 32 Q 16 38 21 32 Q 26 38 32 32 Q 38 38 43 32 Q 48 38 54 32 L 54 25 L 10 25 Z"
+                                fill="#6D4C41" />
+                            <circle cx="18" cy="23" r="3.5" fill="#E53935" />
+                            <circle cx="32" cy="22" r="3.5" fill="#E53935" />
+                            <circle cx="46" cy="23" r="3.5" fill="#E53935" />
+                            <rect x="30" y="10" width="4" height="12" rx="1.5" fill="#FFEB3B" />
+                            <ellipse cx="32" cy="6" rx="3" ry="5" fill="#FF5722" class="flame-animation" />
+                        </g>
+                    </svg>
+                </div>
+
+                <p class="text-rose-900 font-bold text-sm mb-4">Are you excited for what's next? 🥰</p>
+
+                <!-- Interactive Question Buttons with Dodging "No" -->
+                <div id="dodgeBoundary" class="relative w-full h-24 flex items-center justify-center space-x-6">
+                    <button onclick="goToStep(3); triggerConfetti();"
+                        class="px-7 py-2.5 bg-gradient-to-r from-rose-500 to-pink-500 text-white font-bold rounded-full shadow-lg hover:scale-105 active:scale-95 transition z-10">
+                        Yes! 💕
+                    </button>
+
+                    <button id="runawayNoBtn" onmouseover="dodgeNo()" ontouchstart="dodgeNo()" onclick="dodgeNo()"
+                        class="absolute px-6 py-2.5 bg-white border border-rose-300 text-rose-500 font-bold rounded-full shadow-sm transition-all duration-150">
+                        No
+                    </button>
+                </div>
+            </section>
+
+            <!-- ==============================================
+           STEP 3: BALLOON POP MINI-GAME
+      =============================================== -->
+            <section id="step3"
+                class="screen-container screen-hidden w-full flex flex-col items-center justify-between h-full py-2">
+                <div class="text-center w-full">
+                    <div class="flex justify-between items-center px-2 mb-1">
+                        <span class="text-[10px] font-black text-rose-400 uppercase tracking-widest">Mini Game</span>
+                        <span id="balloonCounter"
+                            class="text-xs font-black px-3 py-1 bg-pink-100 text-deepBerry rounded-full">0/4
+                            POPPED</span>
+                    </div>
+                    <h2 class="font-dancing text-3xl font-bold text-deepBerry">Pop all 4 balloons</h2>
+                    <p class="text-xs text-rose-400">Tap every balloon to unlock the message</p>
+                </div>
+
+                <!-- 4 Pastel Balloons -->
+                <div class="grid grid-cols-2 gap-5 my-auto w-full max-w-[280px]">
+
+                    <!-- Balloon 1: Sky Blue (#90CAF9) -> You -->
+                    <div id="b1" onclick="popBalloon(1, 'You')"
+                        class="balloon-wiggle flex flex-col items-center cursor-pointer transition active:scale-95">
+                        <div class="w-24 h-28 rounded-full rounded-b-2xl shadow-lg relative flex items-center justify-center"
+                            style="background: radial-gradient(circle at 35% 30%, #bbdefb, #90caf9, #42a5f5);">
+                            <div class="absolute top-2.5 left-3.5 w-4 h-6 bg-white/50 rounded-full rotate-[-25deg]">
+                            </div>
+                            <span class="text-[10px] font-black text-white tracking-widest uppercase opacity-80">POP
+                                ME</span>
+                        </div>
+                        <div class="w-1.5 h-2 bg-blue-500 rounded-sm"></div>
+                        <div class="w-0.5 h-6 bg-blue-300"></div>
+                    </div>
+
+                    <!-- Balloon 2: Pastel Pink (#F48FB1) -> are -->
+                    <div id="b2" onclick="popBalloon(2, 'are')"
+                        class="balloon-wiggle flex flex-col items-center cursor-pointer transition active:scale-95"
+                        style="animation-delay: 0.6s;">
+                        <div class="w-24 h-28 rounded-full rounded-b-2xl shadow-lg relative flex items-center justify-center"
+                            style="background: radial-gradient(circle at 35% 30%, #fce4ec, #f48fb1, #ec407a);">
+                            <div class="absolute top-2.5 left-3.5 w-4 h-6 bg-white/50 rounded-full rotate-[-25deg]">
+                            </div>
+                            <span class="text-[10px] font-black text-white tracking-widest uppercase opacity-80">POP
+                                ME</span>
+                        </div>
+                        <div class="w-1.5 h-2 bg-rose-500 rounded-sm"></div>
+                        <div class="w-0.5 h-6 bg-pink-300"></div>
+                    </div>
+
+                    <!-- Balloon 3: Mint Green (#A5D6A7) -> so -->
+                    <div id="b3" onclick="popBalloon(3, 'so')"
+                        class="balloon-wiggle flex flex-col items-center cursor-pointer transition active:scale-95"
+                        style="animation-delay: 1.2s;">
+                        <div class="w-24 h-28 rounded-full rounded-b-2xl shadow-lg relative flex items-center justify-center"
+                            style="background: radial-gradient(circle at 35% 30%, #e8f5e9, #a5d6a7, #66bb6a);">
+                            <div class="absolute top-2.5 left-3.5 w-4 h-6 bg-white/50 rounded-full rotate-[-25deg]">
+                            </div>
+                            <span class="text-[10px] font-black text-white tracking-widest uppercase opacity-80">POP
+                                ME</span>
+                        </div>
+                        <div class="w-1.5 h-2 bg-emerald-600 rounded-sm"></div>
+                        <div class="w-0.5 h-6 bg-emerald-300"></div>
+                    </div>
+
+                    <!-- Balloon 4: Lavender Purple (#CE93D8) -> special -->
+                    <div id="b4" onclick="popBalloon(4, 'special')"
+                        class="balloon-wiggle flex flex-col items-center cursor-pointer transition active:scale-95"
+                        style="animation-delay: 1.8s;">
+                        <div class="w-24 h-28 rounded-full rounded-b-2xl shadow-lg relative flex items-center justify-center"
+                            style="background: radial-gradient(circle at 35% 30%, #f3e5f5, #ce93d8, #ab47bc);">
+                            <div class="absolute top-2.5 left-3.5 w-4 h-6 bg-white/50 rounded-full rotate-[-25deg]">
+                            </div>
+                            <span class="text-[10px] font-black text-white tracking-widest uppercase opacity-80">POP
+                                ME</span>
+                        </div>
+                        <div class="w-1.5 h-2 bg-purple-600 rounded-sm"></div>
+                        <div class="w-0.5 h-6 bg-purple-300"></div>
+                    </div>
+                </div>
+
+                <!-- Revealed Words Display -->
+                <div class="w-full text-center min-h-[46px] flex items-center justify-center space-x-2">
+                    <span id="rw1"
+                        class="font-dancing text-2xl font-extrabold text-deepBerry opacity-0 transition duration-300"></span>
+                    <span id="rw2"
+                        class="font-dancing text-2xl font-extrabold text-deepBerry opacity-0 transition duration-300"></span>
+                    <span id="rw3"
+                        class="font-dancing text-2xl font-extrabold text-deepBerry opacity-0 transition duration-300"></span>
+                    <span id="rw4"
+                        class="font-dancing text-2xl font-extrabold text-deepBerry opacity-0 transition duration-300"></span>
+                </div>
+
+                <button id="afterBalloonsBtn" onclick="goToStep(4)"
+                    class="hidden mb-2 px-7 py-2.5 bg-gradient-to-r from-rose-500 to-pink-500 text-white font-bold rounded-full shadow-lg text-sm animate-bounce">
+                    Make a Birthday Wish 🎂
+                </button>
+            </section>
+
+            <!-- ==============================================
+           STEP 4: CANDLE BLOW
+      =============================================== -->
+            <section id="step4"
+                class="screen-container screen-hidden w-full flex flex-col items-center justify-center text-center">
+                <h2 id="candleHeading" class="fon
